@@ -1,5 +1,6 @@
 package playjsontime
 
+import jsonplaytime.JodaIntervalFormat
 import org.joda.time.DateTime
 import org.joda.time.format.{ DateTimeFormatter, ISODateTimeFormat }
 import play.api.data.validation.ValidationError
@@ -26,4 +27,7 @@ object `package` {
   }
 
   implicit val dateTimeFormat: Format[DateTime] = Format(dateTimeReads, dateTimeWrites)
+
+  implicit val intervalFormat = Format(JodaIntervalFormat.DefaultJodaIntervalReads, JodaIntervalFormat.DefaultJodaIntervalWrites)
+
 }
