@@ -1,7 +1,7 @@
 package playjsontime
 
 import org.joda.time.DateTime
-import org.joda.time.format.{DateTimeFormat, DateTimeFormatter, ISODateTimeFormat}
+import org.joda.time.format.{DateTimeFormatter, ISODateTimeFormat}
 import play.api.data.validation.ValidationError
 import play.api.libs.json._
 

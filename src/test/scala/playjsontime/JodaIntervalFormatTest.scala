@@ -4,7 +4,7 @@ import java.util.TimeZone
 
 import org.joda.time.{DateTime, DateTimeZone, Interval}
 import org.specs2.mutable.Specification
-import play.api.libs.json.{Json, Reads}
+import play.api.libs.json.Json
 
 class JodaIntervalFormatTest extends Specification {
 
