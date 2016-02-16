@@ -12,11 +12,11 @@ object JodaIsoDateTimeFormat {
   val dtf: DateTimeFormatter = ISODateTimeFormat.dateTime().withZoneUTC()
   val validationError = ValidationError("error.expected.joda.datetime.iso.format")
 
-  implicit def dateTimeWrites: Writes[DateTime] = new Writes[DateTime] {
+  implicit val dateTimeWrites: Writes[DateTime] = new Writes[DateTime] {
     override def writes(o: DateTime): JsValue = JsString(o.toString(dtf))
   }
 
-  implicit def dateTimeReads: Reads[DateTime] = new Reads[DateTime] {
+  implicit val dateTimeReads: Reads[DateTime] = new Reads[DateTime] {
     override def reads(json: JsValue): JsResult[DateTime] = {
       json.validate[String] flatMap (dateString =>
         Try {

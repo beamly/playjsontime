@@ -11,8 +11,7 @@ class JodaIntervalFormatTest extends Specification {
   "Joda Interval" should {
     "convert date without timezone to Json with UTC" in {
       val timeZone = DateTimeZone.forTimeZone(TimeZone.getTimeZone("GMT"))
-      val interval = new Interval(DateTime.parse("2015-02-13").toDateTimeISO.withZone(timeZone),
-                                  DateTime.parse("2015-02-16").toDateTimeISO.withZone(timeZone))
+      val interval = new Interval(DateTime.parse("2015-02-13").toDateTimeISO, DateTime.parse("2015-02-16").toDateTimeISO)
       val json = Json.toJson(interval)
       Json.stringify(json) must_== "{\"start\":\"2015-02-13T00:00:00.000Z\",\"end\":\"2015-02-16T00:00:00.000Z\"}"
     }
@@ -35,7 +34,7 @@ class JodaIntervalFormatTest extends Specification {
     }
 
     "return a JsError when the json keys are invalid" in {
-      val json = Json.parse("""{"foo":1420070400000,"end":1420070400000}""")
+      val json = Json.parse("{\"foo\":\"2015-02-13T00:00:00.000+0200\",\"end\":\"2015-02-16T00:00:00.000+0200\"}")
       val interval = json.validate[Interval]
       interval.isError must beTrue
       interval.asEither.left.get.head._2.head.message mustEqual "error.expected.jodainterval.format"
