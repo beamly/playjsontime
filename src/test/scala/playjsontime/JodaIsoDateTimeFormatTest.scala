@@ -1,39 +1,38 @@
 package playjsontime
 
-import org.joda.time.{DateTimeZone, DateTime}
 import org.joda.time.format.ISODateTimeFormat
+import org.joda.time.{ DateTime, DateTimeZone }
 import org.specs2.mutable.Specification
+import org.specs2.specification.core.Fragments
 import play.api.libs.json._
 
 class JodaIsoDateTimeFormatTest extends Specification {
 
-  val utcString: String = "2015-03-23T17:40:42.508Z"
-  val dt = DateTime.parse(utcString, ISODateTimeFormat.dateTime().withOffsetParsed())
-  "DateTime parsing" should {
+  val expectedFormat = ISODateTimeFormat.dateTime().withZoneUTC()
 
-    "parse a datetime" in {
+  val testTimes =
+    List(
+      "2015-03-23T17:40:42.508Z" -> "2015-03-23T17:40:42.508Z",
+      "2015-03-23T18:40:42.508+01:00" -> "2015-03-23T17:40:42.508Z",
+      "2015-03-23T17:40:42Z" -> "2015-03-23T17:40:42.000Z",
+      "2015-03-23T18:40:42+01:00" -> "2015-03-23T17:40:42.000Z")
 
-      Json.parse(s""""$utcString"""").as[DateTime] mustEqual dt
+  "JodaIsoDateTimeFormat" should {
+    Fragments.foreach(testTimes) {
+      case (input, expected) =>
+        "parse time string " + input in {
+
+          val parsedExpected = expectedFormat.parseDateTime(expected)
+          val parsed = Json.parse(s""""$input"""").as[DateTime]
+
+          parsed mustEqual parsedExpected
+          parsed.getZone mustEqual (DateTimeZone.UTC)
+
+          Json.stringify(Json.toJson(parsed)) mustEqual ("\"" + expected + "\"")
+        }
     }
 
-    "parse a different timezone" in {
-      val plainIsoFormat = ISODateTimeFormat.dateTime()
-
-      val differentTimeZone = dt.withZone(DateTimeZone.forOffsetHours(1))
-
-      val differentTimeZoneString = differentTimeZone.toString(plainIsoFormat)
-      differentTimeZoneString mustEqual "2015-03-23T18:40:42.508+01:00"
-
-      val jsonString = s"""{"start_time": "${differentTimeZone }"}"""
-
-      Json.parse(s""""$differentTimeZoneString"""").as[DateTime] mustEqual dt
-      Json.parse(s""""$differentTimeZoneString"""").as[DateTime].getZone mustEqual DateTimeZone.UTC
-      Json.parse(s""""$differentTimeZoneString"""").as[DateTime] must not be equalTo(differentTimeZone)
-    }
-
     "parse a datetime" in {
-      val dt = DateTime.parse(utcString)
-
       val jsonString = """{"startTime": "2015-03-23"}"""
 
       Json.parse(jsonString).validate[TestCase] mustEqual JsError(__ \ "startTime", JodaIsoDateTimeFormat.validationError)
@@ -43,6 +42,7 @@ class JodaIsoDateTimeFormatTest extends Specification {
 }
 
 case class TestCase(startTime: DateTime)
+
 object TestCase {
   implicit val format: Format[TestCase] = Json.format[TestCase]
 }
