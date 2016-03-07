@@ -1,10 +1,10 @@
 lazy val playjsontime = project in file(".")
 
 organization := "com.beamly"
-        name := "playjsontime"
     licenses := Seq(("Apache-2.0", url("https://www.apache.org/licenses/LICENSE-2.0")))
  description := "Play-Json typeclass instances for datetime types"
     homepage := Some(url("https://github.com/beamly/playjsontime"))
+   startYear := Some(2016)
 
       scalaVersion := "2.11.7"
 crossScalaVersions := Seq("2.11.7", "2.10.6")
